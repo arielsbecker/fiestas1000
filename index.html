@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<!-- Meta -->
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="author" content="Ariel Sebastián Becker">
+
+		<!-- Favicon -->
+		<link rel="shortcut icon" href="./assets/images/favicon.png">
+
+		<!-- Archivos CSS -->
+		<link rel="stylesheet" href="./assets/css/style.css">
+		<link rel="stylesheet" href="./assets/css/jquery-ui.css">
+
+		<!-- Archivos Javascript -->
+		<script src="./assets/js/custom.js"></script>
+		<script src="./assets/js/jquery-3.2.1.min.js"></script>
+		<script src="./assets/js/jquery-ui.min.js"></script>
+
+		<!-- Javascript -->
+		<script type="text/javascript">
+			$(function() {
+				$( "#calendar" ).datepicker();
+			});
+		</script>
+		<script type="text/javascript">
+			function calcularProximaFiesta() {
+				var myParty = null;
+				if (document.getElementById("calendar").value) {
+					var myBirthDate = new Date(document.getElementById("calendar").value);
+
+					myParty = calcNextParty(myBirthDate);
+
+					if (myParty.remainingDaysToNextParty === 0) {
+						document.getElementById("resultado").innerHTML = "<p>🎂 ¡Felicidades! ¡Hoy es su fiesta de " + toSpanishNumber(myParty.nextPartyAge) +" días! 🎂</p>"
+					}
+
+					else {
+
+					document.getElementById("resultado").innerHTML = "<p>Usted tiene una edad de " + toSpanishNumber(myParty.ageInDays) + " días, o " + myParty.ageInYearsAndDays + ".<br />La próxima fiesta, en la que usted cumplirá " + toSpanishNumber(myParty.nextPartyAge) + " días, será el " + dayOfWeek(myParty.nextPartyDate.getDay()) + " " + myParty.nextPartyDate.getDate() + " de " + monthName(myParty.nextPartyDate.getMonth()) + " de " + myParty.nextPartyDate.getFullYear() + ".</br>Faltan " + toSpanishNumber(myParty.remainingDaysToNextParty) + " días.</p>";
+					}
+				}
+			}
+
+			function calcularTabla() {
+				var myParties = [];
+				var limite = document.getElementById("limite").value;
+				limite++;
+				var tableHeader = "<table class='myTable myTable-rounded'><thead><tr><th>Días a cumplir</th><th>Fecha</th><th>Edad</th></tr></thead>";
+				var tableBody = "<tbody>";
+				var tableFooter = "</table>";
+				if (document.getElementById("calendar").value) {
+					myParties = calcParties(new Date(document.getElementById("calendar").value), limite);
+					for (i = 0; i < limite; i++) {
+						tableBody = tableBody + "<tr>";
+						tableBody = tableBody + "<td>" + myParties[i].partyDay + "</td>";
+						tableBody = tableBody + "<td>" + formatDate(myParties[i].partyDate) + "</td>";
+						tableBody = tableBody + "<td>" + myParties[i].partyAge + "</td>";
+						tableBody = tableBody + "</tr>";
+					}
+					tableBody = tableBody + "</tbody>";
+					document.getElementById("resultado").innerHTML = tableHeader + tableBody + tableFooter;
+				}
+			}
+		</script>
+
+		<!-- Título -->
+		<title>Cálculo de fiestas de 1000 días</title>
+
+    </head>
+    <body>
+		<div class="MiClase">
+			<h2>Fiestas de 1000 días</h2>
+			<p>Las fiestas de 1000 días son celebraciones que se llevan a cabo exactamente cada 1000 dias contando a partir de la fecha de nacimiento de una persona.</p>
+			<p>Cada individuo, en promedio, tendrá aproximadamente 35 de estas celebraciones a lo largo de toda su vida.</p>
+			<h3>Calculadora de fiestas</h3>
+			<form>
+				<label for="miNumero">Fecha de nacimiento:</label>
+				<input type="text" id="calendar" class="calendarBox" required>
+				<label for="miNumero">Total de fiestas de 1000 días a calcular:</label>
+				<input type="number" id="limite" class="numberBox" required>
+				<input type="button" onClick="calcularProximaFiesta();" value="Próxima fiesta">
+				<input type="button" onClick="calcularTabla();" value="Tabla de fiestas">
+			</form>
+			<div id="resultado" style="overflow-x:auto;"></div>
+		</div>
+    </body>
+</html>
